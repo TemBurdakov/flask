@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}
+
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Привет, друг</h1>
+    <form method="POST"  enctype="multipart/form-data">
+        <input type="text" name="title" id="title" class="form-control" placeholder="Введите название предмета"><br>
+        <input class="w-100 btn btn-lg btn-primary" type="file" name="file"><br>
+        <input type="submit" class="btn btn-success" value="Отправить">
+
+    </form>
+</div>
+{% endblock %}

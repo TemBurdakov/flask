@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}
+Все статьи на сайте
+{% endblock %}
+{% block header %}
+    <div class=" container pricing-header p-3 pb-md-4 mx-auto text-center">
+
+      <h1 class="display-4 fw-normal text-body-emphasis">Ваши запросы</h1>
+      <p class="fs-5 text-body-secondary">Здесь хранятся все ваши запросы на генерацию вопросов, чтобы получить ответы на вопросы нажмите кнопку</p>
+    </div>
+{% endblock %}
+{% block body %}
+<div class="container mt-5">
+    <h1>Все статьи на сайте</h1>
+    {% if upload|length > 0 %}
+        {% for i in upload%}
+        <div class="alert alert-info">
+            <h2>{{i.filename}}</h2>
+            <p>{{i.data}}</p>
+            <hr>
+            <p>{{i.questions}}</p>
+            <a href="/history/{{ i.id }}" class = "btn btn-warning">Посмотреть ответы</a>
+        </div>
+
+        {%endfor%}
+    {% else %}
+    <p>Вы ещё не генерировали вопросы</p>
+    {% endif %}
+</div>
+{% endblock %}

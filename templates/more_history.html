@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}
+{{upload.filename}}
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>{{upload.filename}}</h1>
+    <div class="alert alert-info">
+        <p>{{upload.questions}}</p>
+        <p><b>Вопросы: {{upload.answer}}</b></p>
+        <a href="/history/{{ upload.id }}/del" class = "btn btn-danger">Удалить</a>
+        <a href="/history/{{ upload.id }}/save" class = "btn btn-success">Показать ответы</a>
+    </div>
+</div>
+{% endblock %}
