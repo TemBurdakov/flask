@@ -16,6 +16,7 @@ class Upload(db.Model):
     __bind_key__ = 'messages'
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(50))
+    part_text = db.Column(db.String(150))
     data = db.Column(db.Text, nullable=False)#db.Column(db.LargeBinary)
     questions = db.Column(db.Text, nullable=True)
     answer = db.Column(db.Text, nullable=True)
@@ -35,11 +36,12 @@ def experience():
         title = request.form['title']
         file = request.files['file']
         data = file.read().decode('utf-8')
+        part_text = data[:455] + "..."
         questions = generate_questions(data)
         print(questions)
         text_quest = data + '\n' + questions
         answer = generate_answer(text_quest)
-        upload = Upload(filename=title, data=data,questions=questions, answer=answer)
+        upload = Upload(filename=title, data=data,questions=questions, answer=answer, part_text=part_text)
         try:
             db.session.add(upload)
             db.session.commit()

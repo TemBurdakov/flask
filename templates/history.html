@@ -16,7 +16,7 @@
         {% for i in upload%}
         <div class="alert alert-info">
             <h2>{{i.filename}}</h2>
-            <p>{{i.data}}</p>
+            <p>{{i.part_text}}</p>
             <hr>
             <p>{{i.questions}}</p>
             <a href="/history/{{ i.id }}" class = "btn btn-warning">Посмотреть ответы</a>
