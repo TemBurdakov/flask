@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect, send_file
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from chat_bot import open_file, generate_questions, generate_answer
+from chat_bot import generate_func, generate_false, chat_questions, chat_answer
 from io import BytesIO
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
@@ -20,7 +20,7 @@ class Upload(db.Model):
     data = db.Column(db.Text, nullable=False)#db.Column(db.LargeBinary)
     questions = db.Column(db.Text, nullable=True)
     answer = db.Column(db.Text, nullable=True)
-
+    false_answer = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
         return '<Upload %r>' % self.id
@@ -37,11 +37,13 @@ def experience():
         file = request.files['file']
         data = file.read().decode('utf-8')
         part_text = data[:455] + "..."
-        questions = generate_questions(data)
-        print(questions)
+        questions = generate_func(data, chat_questions)
         text_quest = data + '\n' + questions
-        answer = generate_answer(text_quest)
-        upload = Upload(filename=title, data=data,questions=questions, answer=answer, part_text=part_text)
+        #text_quest = data + '\n' + " ".join(questions)
+        true_answer = generate_func(text_quest, chat_answer)
+        false_answer = generate_func(text_quest, generate_false)
+        upload = Upload(filename=title, data=data, questions=questions, answer=true_answer, part_text=part_text,
+                        false_answer=false_answer)
         try:
             db.session.add(upload)
             db.session.commit()
@@ -59,9 +61,9 @@ def history():
 
 
 @app.route('/history/<int:id>')
-def more_history(id):
+def more_history(id, stick=0):
     upload = Upload.query.get(id)
-    return render_template("more_history.html", upload=upload)
+    return render_template("more_history.html", upload=upload, stick=stick)
 
 
 @app.route('/history/<int:id>/del')
@@ -74,6 +76,22 @@ def letter_delete(id):
         return redirect('/history')
     except:
         return "При удалении произошла ошибка"
+
+
+@app.route('/history/<int:id>/quiz')
+def show_quiz(id):
+    return more_history(id=id, stick=2)
+
+
+@app.route('/history/<int:id>/answer')
+def show_answer(id):
+    return more_history(id=id, stick=1)
+
+
+@app.route('/history/<int:id>/close')
+def close_answer(id):
+    return more_history(id=id)
+
 
 class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -141,7 +159,7 @@ def post_delete(id):
         return "При удалении произошла ошибка"
 
 
-@app.route('/posts/<int:id>/save', methods=['POST', 'GET'])
+'''@app.route('/posts/<int:id>/save', methods=['POST', 'GET'])
 def post_save(id):
     article = Article.query.get_or_404(id)
 
@@ -150,7 +168,7 @@ def post_save(id):
         db.session.commit()
         return redirect('/posts')
     except:
-        return "При сохранении произошла ошибка"
+        return "При сохранении произошла ошибка"'''
 
 
 with app.app_context():
